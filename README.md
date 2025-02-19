@@ -1,4 +1,3 @@
-我来帮你写一个详细的README.md文件。
 
 ```markdown
 # YOLO XML转TXT标注格式转换工具
@@ -30,7 +29,7 @@ pip install opencv-python numpy
 
 1. 运行程序：
 ```bash
-python xml2txt.py
+python xml_to_txt_converter.py
 ```
 
 2. 按照提示输入：
