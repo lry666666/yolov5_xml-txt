@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>图片批量转JPG工具</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f7f7f7 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 48px auto 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 32px rgba(60, 100, 180, 0.10), 0 1.5px 6px rgba(0, 0, 0, 0.04);
+            padding: 38px 32px 32px 32px;
+        }
+
+        h1 {
+            color: #2d7be5;
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            color: #4b5563;
+            font-size: 1.08em;
+            margin-bottom: 1.5em;
+        }
+
+        .btn {
+            padding: 10px 28px;
+            background: linear-gradient(90deg, #2d7be5 60%, #6ea8fe 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.08em;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(45, 123, 229, 0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #1a5fd0 60%, #4e8be6 100%);
+            box-shadow: 0 4px 16px rgba(45, 123, 229, 0.13);
+        }
+
+        label {
+            color: #374151;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+            margin-bottom: 18px;
+        }
+
+        .progress {
+            margin: 18px 0 10px 0;
+            color: #2563eb;
+            font-weight: 500;
+            font-size: 1.08em;
+            min-height: 1.5em;
+        }
+
+        #downloadLink {
+            display: inline-block;
+            margin-top: 8px;
+            background: #f0f4fa;
+            color: #2563eb;
+            padding: 7px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid #b6d0fa;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        #downloadLink:hover {
+            background: #e0e7ff;
+            color: #1a5fd0;
+        }
+
+        .note {
+            background: #fffbe6;
+            border-left: 4px solid #ffd700;
+            padding: 10px 16px;
+            margin: 18px 0 0 0;
+            color: #8a6d1b;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.98em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>图片批量转JPG工具</h1>
+        <div class="desc">选择一个图片文件夹，点击“批量转JPG”即可一键转换并打包下载所有JPG图片。支持 PNG、BMP、GIF、TIFF、WEBP、JPEG 等格式。</div>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label>选择图片文件夹：</label><br>
+            <input type="file" name="images" id="images" multiple webkitdirectory accept="image/*"><br>
+            <button class="btn" type="submit">批量转JPG</button>
+        </form>
+        <div class="progress" id="progress"></div>
+        <a id="downloadLink" style="display:none;" href="#">下载全部JPG</a>
+        <div class="note">
+            温馨提示：<br>
+            1. 仅会上传你选中文件夹下的所有图片文件，不会递归子文件夹。<br>
+            2. 转换和打包过程均在本地完成，无需联网，安全私密。<br>
+            3. 如遇大文件或大量图片，转换时间可能稍长，请耐心等待。
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const progress = document.getElementById('progress');
+        const downloadLink = document.getElementById('downloadLink');
+        form.onsubmit = async function (e) {
+            e.preventDefault();
+            progress.textContent = '正在上传并转换...';
+            downloadLink.style.display = 'none';
+            const formData = new FormData(form);
+            const res = await fetch('/convert', { method: 'POST', body: formData });
+            if (res.ok) {
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.download = 'jpg_images.zip';
+                downloadLink.style.display = 'inline-block';
+                progress.textContent = '转换完成，点击下方按钮下载。';
+            } else {
+                progress.textContent = '转换失败，请重试。';
+            }
+        }
+    </script>
+</body>
+
+</html>
